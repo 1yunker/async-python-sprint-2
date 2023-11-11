@@ -2,3 +2,8 @@
 .idea/
 __pycache__/
 *.pyc
+/venv
+
+# temp files
+/results
+sheduler.log

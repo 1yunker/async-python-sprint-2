@@ -1,7 +1,36 @@
+from datetime import datetime
+from enum import Enum
+from typing import Callable
 from functools import wraps
-from queue import Queue
-from tracemalloc import start
-from typing import Any, Callable, Generator
+
+from scheduler import logging
+logger = logging.getLogger()
+
+
+def coroutine(f):
+    @wraps(f)
+    def wrap(*args, **kwargs):
+        gen = f(*args, **kwargs)
+        gen.send(None)
+        return gen
+    return wrap
+
+
+class Status(Enum):
+    """
+    Статус задачи.
+    --------------
+    READY - задача готова к исполнению
+    EXEC - задача выполняется
+    WAIT - задача ожидает выполнение другой задачи
+    DONE - задача успешно исполнена
+    ERROR - при выполнении задачи возникла ошибка
+    """
+    READY = 0
+    EXEC = 1
+    WAIT = 2
+    DONE = 3
+    ERROR = 4
 
 
 class Job:
@@ -11,27 +40,52 @@ class Job:
 
     def __init__(
             self,
+            name,
             target: Callable,
-            args: tuple = None,
-            kwargs: dict = None,
-            start_at="",
+            args=None,
+            kwargs=None,
+            start_at=datetime.now(),
             max_working_time=-1,
-            tries=0,
-            dependencies=[]
+            tries: int = 0,
+            dependencies=[],
+            status=Status.READY
     ):
-        self.__args = args or ()
-        self.__kwargs = kwargs or {}
-        self.__coroutine = target(*self.__args, **self.__kwargs)
+        self.name = name
+        self._args = args or ()
+        self._kwargs = kwargs or {}
+        self._target = target
         self.start_at = start_at
         self.max_working_time = max_working_time
         self.tries = tries
         self.dependencies = dependencies
+        self.status = status
 
+    @coroutine
     def run(self) -> None:
         """
         Запустить задачу.
         """
-        self.__coroutine.send(None)
+        # start_time = time
+        self.status = Status.EXEC
+        while task := (yield):
+            try:
+                return self._target(*self._args, **self._kwargs)
+            except Exception as err:
+                logger.error(
+                    f'Задача {self._target} завершилась с ошибкой: {err}'
+                )
+
+                while task.tries > 0:
+                    task.tries -= 1
+                    logger.warning(f'Задача {task.name} была перезапущена.')
+                    try:
+                        self._target(*self._args, **self._kwargs)
+                        logger.info(f'Задача {task.name} успешно завершена.')
+                    except Exception as err:
+                        logger.error(
+                            f'Задача {task.name} завершилась с ошибкой: {err}'
+                        )
+                return None
 
     def pause(self):
         """
