@@ -12,9 +12,9 @@ class TaskSchemaBase(BaseModel):
     args: list
     kwargs: dict
     start_at: datetime
-    max_working_time: Optional[int]
+    max_working_time: Optional[float]
     tries: int
-    dependencies: list
+    # dependencies: list
     status: Status
 
 

@@ -1,9 +1,11 @@
+import time
 from datetime import datetime
 from enum import Enum
-from typing import Callable
 from functools import wraps
+from typing import Callable
 
 from scheduler import logging
+
 logger = logging.getLogger()
 
 
@@ -45,47 +47,53 @@ class Job:
             args=None,
             kwargs=None,
             start_at=datetime.now(),
-            max_working_time=-1,
+            max_working_time=None,
             tries: int = 0,
             dependencies=[],
             status=Status.READY
     ):
         self.name = name
-        self._args = args or ()
-        self._kwargs = kwargs or {}
-        self._target = target
+        self.args = args or ()
+        self.kwargs = kwargs or {}
+        self.target = target
         self.start_at = start_at
         self.max_working_time = max_working_time
         self.tries = tries
         self.dependencies = dependencies
         self.status = status
 
+    def __repr__(self):
+        return f'{self.target}'
+
     @coroutine
     def run(self) -> None:
         """
         Запустить задачу.
         """
-        # start_time = time
+        start_time = time.time()
         self.status = Status.EXEC
-        while task := (yield):
-            try:
-                return self._target(*self._args, **self._kwargs)
-            except Exception as err:
-                logger.error(
-                    f'Задача {self._target} завершилась с ошибкой: {err}'
-                )
-
-                while task.tries > 0:
-                    task.tries -= 1
-                    logger.warning(f'Задача {task.name} была перезапущена.')
-                    try:
-                        self._target(*self._args, **self._kwargs)
-                        logger.info(f'Задача {task.name} успешно завершена.')
-                    except Exception as err:
-                        logger.error(
-                            f'Задача {task.name} завершилась с ошибкой: {err}'
-                        )
-                return None
+        try:
+            yield self.target(*self.args, **self.kwargs)
+            time_delta = time.time() - start_time
+            logger.info(
+                f'Здача {self.target} выполнена. '
+                f'Время выполнения: {time_delta}'
+            )
+        except Exception as err:
+            logger.error(
+                f'Задача {self.target} завершилась с ошибкой: {err}'
+            )
+            while self.tries > 0:
+                self.tries -= 1
+                logger.warning(f'Задача {self.name} была перезапущена.')
+                try:
+                    self.run()
+                    logger.info(f'Задача {self.name} успешно завершена.')
+                except Exception as err:
+                    logger.error(
+                        f'Задача {self.name} завершилась с ошибкой: {err}'
+                    )
+            return None
 
     def pause(self):
         """

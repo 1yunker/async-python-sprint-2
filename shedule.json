@@ -1,1 +1,22 @@
-[]
+[
+    {
+    "name": "CREATE_TEMP_DIR",
+    "args": [],
+    "kwargs": {},
+    "target": "task_01_mkdir",
+    "max_working_time": 1,
+    "dependencies": [],
+    "tries": 0
+    },
+    {
+    "name": "WEATHER_MOSCOW_TO_JSON",
+    "args": [
+        "MOSCOW"
+    ],
+    "kwargs": {},
+    "target": "task_03_get_weather_and_save",
+    "max_working_time": 0.25,
+    "dependencies": [],
+    "tries": 3
+    }
+]

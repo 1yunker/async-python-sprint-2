@@ -1,12 +1,17 @@
 import json
 import logging
+import time
+from concurrent.futures import (
+    ProcessPoolExecutor,
+    ThreadPoolExecutor,
+    TimeoutError,
+)
 from queue import Queue
 
 from job import Job
-from json_schema import TaskJsonSchema
+from json_schema import TaskJsonSchema, TaskSchemaBase
 
-# from time import sleep
-
+# from utils import CITIES
 
 format = '%(asctime)s [%(levelname)s]: %(message)s'
 logging.basicConfig(
@@ -15,9 +20,11 @@ logging.basicConfig(
     format=format,
     level=logging.INFO
 )
+
 logger = logging.getLogger()
 
 
+# @singleton
 class Scheduler:
     """
     Планировщик задач.
@@ -38,7 +45,6 @@ class Scheduler:
         """
         Добавить задачу в список на исполнение.
         """
-
         if task.dependencies:
             logger.info('>>> Добавление в планировщик запвисимых задач:')
             for depend_task in task.dependencies:
@@ -55,19 +61,32 @@ class Scheduler:
         """
         logger.info('Планировщик начал работу.')
         self.is_run = True
+        start_time = time.time()
 
-        while not self.tasks.empty():
+        with ThreadPoolExecutor(max_workers=self._pool_size) as pool:
 
-            # Проверям количество одновремено выполняемых задач
-            # if
+            while not self.tasks.empty():
 
-            job = self.tasks.get()
-            try:
-                job.run()
-            except StopIteration:
-                continue
+                if not self.is_run:
+                    break
 
-        logger.info('Планировщик завершил работу.')
+                # Берем задачу из очереди
+                job = self.tasks.get()
+                # future = pool.submit(job.target, *job.args, **job.kwargs)
+                future = pool.submit(job.run)
+                try:
+                    future.result(timeout=job.max_working_time)
+                    logger.info(f'Задача {job.name} успешно выполнена.')
+                except TimeoutError:
+                    logger.error(
+                        f'Задача {job.name} первана по таймауту.'
+                    )
+                    continue
+
+        time_delta = time.time() - start_time
+        logger.info(
+            f'Планировщик завершил работу. Время выполнения: {time_delta}'
+        )
 
     def restart(self) -> None:
         """
@@ -76,7 +95,7 @@ class Scheduler:
         if self.is_run:
             print('Планировщик уже запущен!')
         else:
-            self.restore()
+            self.restore(self.BACKUP_FILE)
             self.run()
 
     def stop(self) -> None:
@@ -90,20 +109,54 @@ class Scheduler:
         """
         Записать задачи из планировщика в JSON-файл.
         """
-        tasks_json = []
-        for task in list(self.tasks.queue):
-            task_dict = task.__dict__
-            task_dict['dependencies'] = [
-                x.__dict__ for x in task_dict['dependencies']
-            ]
-            tasks_json.append(
-                TaskJsonSchema.model_validate(task.__dict__).model_dump_json()
-            )
-        with open(backup_file, 'w') as f:
-            json.dump(tasks_json, f)
+        # tasks_json = []
 
-    def restore(self):
+        with open(backup_file, 'w') as f:
+            for task in list(self.tasks.queue):
+                task_dict = {}
+                task_dict['name'] = task.name
+                task_dict['args'] = task.args[:-1]
+                task_dict['kwargs'] = task.kwargs
+                task_dict['target'] = task.target.__name__
+                # task_dict['start_at'] = task.start_at
+                task_dict['max_working_time'] = task.max_working_time
+                task_dict['tries'] = task.tries
+                json.dump(task_dict, f, indent=4)
+
+            # self.args = args or ()
+            # self.kwargs = kwargs or {}
+            # self.target = target
+            # self.start_at = start_at
+            # self.max_working_time = max_working_time
+            # self.tries = tries
+            # self.dependencies = dependencies
+            # self.status = status
+
+            # task_dict = task.__dict__
+            # task_dict['dependencies'] = [
+            #     x.__dict__ for x in task_dict['dependencies']
+            # ]
+            # tasks_json.append(
+            #     TaskSchemaBase.model_validate(task.__dict__).model_dump_json()
+            # )
+        # with open(backup_file, 'w') as f:
+        #     json.dump(tasks_json, f)
+
+    def restore(self, backup_file):
         """
         Восстановить задачи планировщика из JSON-файла.
         """
-        pass
+        with open(backup_file, 'r') as f:
+            tasks = json.load(f)
+
+        for task in tasks:
+            job = Job(
+                name=task.get('name'),
+                target=task.get('target'),
+                args=task.get('args'),
+                kwargs=task.get('kwargs'),
+                max_working_time=task.get('max_working_time'),
+                dependencies=task.get('dependencies'),
+                tries=task.get('tries'),
+            )
+            self.add_to_schedule(task=job)

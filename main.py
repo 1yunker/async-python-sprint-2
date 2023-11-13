@@ -1,4 +1,4 @@
-# from time import sleep
+from time import sleep
 
 from scheduler import Scheduler
 from tasks import get_tasks
