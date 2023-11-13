@@ -65,7 +65,7 @@ class Scheduler:
             while len(self.tasks) > 0:
                 # Проверка на срабатывание остановки планировщика
                 time_delta = time.time() - start_time
-                if stop_after != 0 and time_delta > stop_after:
+                if stop_after != 0.0 and time_delta > stop_after:
                     self.stop()
                     break
 
@@ -122,7 +122,7 @@ class Scheduler:
         with open(backup_file, 'w') as f:
             json.dump(tasks_json, f, indent=4)
         logger.info('Работа планировщика остановлена. '
-                    'Данные по неволненным задачам успешно сохранены.')
+                    'Данные по невыполненным задачам успешно сохранены.')
 
     def restore(self, backup_file):
         """

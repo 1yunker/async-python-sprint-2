@@ -2,6 +2,7 @@
 from datetime import datetime
 from enum import Enum
 from functools import wraps
+from threading import Timer
 from typing import Callable
 
 from scheduler import logging
@@ -72,8 +73,15 @@ class Job:
         """
         # start_time = time.time()
         self.status = Status.EXEC
+
         try:
-            self.target(*self.args, **self.kwargs)
+            if self.start_at and self.start_at > datetime.now():
+                seconds = (self.start_at - datetime.now()).total_seconds()
+                logger.info(f'Задача {self.name} запустится {self.start_at}.')
+                job = Timer(seconds, self.target, self.args, self.kwargs)
+                job.start()
+            else:
+                self.target(*self.args, **self.kwargs)
         except Exception as err:
             logger.error(
                 f'Задача {self.target} завершилась с ошибкой: {err}'

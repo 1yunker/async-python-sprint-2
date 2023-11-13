@@ -15,7 +15,7 @@ TEMP_DIR = 'results'
 
 def task_01_mkdir(temp_dir):
     os.makedirs(temp_dir, exist_ok=True)
-    logger.info('Директория {temp_dir} успешно создана.')
+    logger.info(f'Директория {temp_dir} успешно создана.')
 
 
 def task_02_rmdir(temp_dir):
@@ -47,11 +47,15 @@ def task_03_get_weather_and_save(city_name, temp_dir=TEMP_DIR):
 
 def get_tasks():
     tasks = []
-    task_01 = Job(
+    task_00 = Job(
         name='CREATE_TEMP_DIR',
         target=task_01_mkdir,  # args=(TEMP_DIR,),
         max_working_time=None,
         tries=3,
+    )
+    task_01 = Job(
+        name='CREATE_TEMP_DIR',
+        target=task_01_mkdir, args=(TEMP_DIR,),
     )
     # task_02 = Job(
     #     name='DELETE_TEMP_DIR',
@@ -69,17 +73,18 @@ def get_tasks():
     #     args=('GIZA', TEMP_DIR,)
     # )
 
+    tasks.append(task_00)
     tasks.append(task_01)
-    # for city_name in CITIES.keys():
-    #     tasks.append(
-    #         Job(
-    #             name=f'WEATHER_{city_name}_TO_JSON',
-    #             target=task_03_get_weather_and_save,
-    #             args=(city_name, TEMP_DIR),
-    #             max_working_time=0.25,
-    #             tries=3,
-    #         )
-    #     )
+    for city_name in CITIES.keys():
+        tasks.append(
+            Job(
+                name=f'WEATHER_{city_name}_TO_JSON',
+                target=task_03_get_weather_and_save,
+                args=(city_name, TEMP_DIR),
+                max_working_time=0.25,
+                tries=3,
+            )
+        )
     # tasks.append(task_02)
     # tasks.append(task_03)
     # tasks.append(task_04)

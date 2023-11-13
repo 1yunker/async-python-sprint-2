@@ -12,8 +12,8 @@ if __name__ == '__main__':
         scheduler.add_to_schedule(task=task)
 
     # Запускаем планировщик
-    scheduler.run()
-    # scheduler.run(stop_after=2.0)
+    # scheduler.run()
+    scheduler.run(stop_after=2.0)
 
     # Перезапускаем планировщик
-    # scheduler.restart()
+    scheduler.restart()
