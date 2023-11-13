@@ -1,17 +1,10 @@
 import json
 import logging
 import time
-from concurrent.futures import (
-    ProcessPoolExecutor,
-    ThreadPoolExecutor,
-    TimeoutError,
-)
-from queue import Queue
+from concurrent.futures import ThreadPoolExecutor, TimeoutError
 
+import tasks as tsk
 from job import Job
-from json_schema import TaskJsonSchema, TaskSchemaBase
-
-# from utils import CITIES
 
 format = '%(asctime)s [%(levelname)s]: %(message)s'
 logging.basicConfig(
@@ -38,7 +31,7 @@ class Scheduler:
 
     def __init__(self, pool_size: int = 10) -> None:
         self._pool_size: int = pool_size
-        self.tasks: Queue[Job] = Queue()
+        self.tasks: list[Job] = []
         self.is_run: bool = False
 
     def add_to_schedule(self, task: Job) -> None:
@@ -48,16 +41,20 @@ class Scheduler:
         if task.dependencies:
             logger.info('>>> Добавление в планировщик запвисимых задач:')
             for depend_task in task.dependencies:
-                if depend_task not in list(self.tasks.queue):
+                if depend_task not in self.tasks:
                     self.add_to_schedule(depend_task)
             logger.info('>>> Все зависимые задачи успешно добавлены.')
 
-        self.tasks.put(task)
+        self.tasks.append(task)
         logger.info(f'Задача {task.name} успешно добавлена в планировщик.')
 
-    def run(self) -> None:
+    def run(self, stop_after: float = 0.0) -> None:
         """
         Запустить исполнение задач из списка.
+        Args:
+            stop_after: время, после которого новые задачи не добавляются
+                и планировщик штатно завершает свою работу.
+
         """
         logger.info('Планировщик начал работу.')
         self.is_run = True
@@ -65,21 +62,26 @@ class Scheduler:
 
         with ThreadPoolExecutor(max_workers=self._pool_size) as pool:
 
-            while not self.tasks.empty():
-
-                if not self.is_run:
+            while len(self.tasks) > 0:
+                # Проверка на срабатывание остановки планировщика
+                time_delta = time.time() - start_time
+                if stop_after != 0 and time_delta > stop_after:
+                    self.stop()
                     break
 
                 # Берем задачу из очереди
-                job = self.tasks.get()
-                # future = pool.submit(job.target, *job.args, **job.kwargs)
+                job = self.tasks.pop(0)
                 future = pool.submit(job.run)
                 try:
                     future.result(timeout=job.max_working_time)
-                    logger.info(f'Задача {job.name} успешно выполнена.')
                 except TimeoutError:
                     logger.error(
                         f'Задача {job.name} первана по таймауту.'
+                    )
+                    continue
+                except Exception as err:
+                    logger.error(
+                        f'Задача {job.name} завершилась с ошибкой: {err}'
                     )
                     continue
 
@@ -109,38 +111,18 @@ class Scheduler:
         """
         Записать задачи из планировщика в JSON-файл.
         """
-        # tasks_json = []
-
+        tasks_json = []
+        for task in self.tasks:
+            task_dict = task.__dict__
+            task_dict['target'] = task.target.__name__
+            task_dict['start_at'] = str(task.start_at)
+            task_dict['dependencies'] = [i.target for i in task.dependencies]
+            task_dict['status'] = str(task.status)
+            tasks_json.append(task_dict)
         with open(backup_file, 'w') as f:
-            for task in list(self.tasks.queue):
-                task_dict = {}
-                task_dict['name'] = task.name
-                task_dict['args'] = task.args[:-1]
-                task_dict['kwargs'] = task.kwargs
-                task_dict['target'] = task.target.__name__
-                # task_dict['start_at'] = task.start_at
-                task_dict['max_working_time'] = task.max_working_time
-                task_dict['tries'] = task.tries
-                json.dump(task_dict, f, indent=4)
-
-            # self.args = args or ()
-            # self.kwargs = kwargs or {}
-            # self.target = target
-            # self.start_at = start_at
-            # self.max_working_time = max_working_time
-            # self.tries = tries
-            # self.dependencies = dependencies
-            # self.status = status
-
-            # task_dict = task.__dict__
-            # task_dict['dependencies'] = [
-            #     x.__dict__ for x in task_dict['dependencies']
-            # ]
-            # tasks_json.append(
-            #     TaskSchemaBase.model_validate(task.__dict__).model_dump_json()
-            # )
-        # with open(backup_file, 'w') as f:
-        #     json.dump(tasks_json, f)
+            json.dump(tasks_json, f, indent=4)
+        logger.info('Работа планировщика остановлена. '
+                    'Данные по неволненным задачам успешно сохранены.')
 
     def restore(self, backup_file):
         """
@@ -152,11 +134,12 @@ class Scheduler:
         for task in tasks:
             job = Job(
                 name=task.get('name'),
-                target=task.get('target'),
+                target=getattr(tsk, task['target']),
                 args=task.get('args'),
                 kwargs=task.get('kwargs'),
+                start_at=task.get('start_at'),
                 max_working_time=task.get('max_working_time'),
-                dependencies=task.get('dependencies'),
+                # dependencies=task.get('dependencies'),
                 tries=task.get('tries'),
             )
             self.add_to_schedule(task=job)

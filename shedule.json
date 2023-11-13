@@ -1,22 +1,142 @@
 [
     {
-    "name": "CREATE_TEMP_DIR",
-    "args": [],
-    "kwargs": {},
-    "target": "task_01_mkdir",
-    "max_working_time": 1,
-    "dependencies": [],
-    "tries": 0
+        "name": "WEATHER_NOVOSIBIRSK_TO_JSON",
+        "args": [
+            "NOVOSIBIRSK",
+            "results"
+        ],
+        "kwargs": {},
+        "target": "task_03_get_weather_and_save",
+        "start_at": "2023-11-13 16:02:29.763122",
+        "max_working_time": 0.25,
+        "tries": 3,
+        "dependencies": [],
+        "status": "Status.READY"
     },
     {
-    "name": "WEATHER_MOSCOW_TO_JSON",
-    "args": [
-        "MOSCOW"
-    ],
-    "kwargs": {},
-    "target": "task_03_get_weather_and_save",
-    "max_working_time": 0.25,
-    "dependencies": [],
-    "tries": 3
+        "name": "WEATHER_KALININGRAD_TO_JSON",
+        "args": [
+            "KALININGRAD",
+            "results"
+        ],
+        "kwargs": {},
+        "target": "task_03_get_weather_and_save",
+        "start_at": "2023-11-13 16:02:29.763122",
+        "max_working_time": 0.25,
+        "tries": 3,
+        "dependencies": [],
+        "status": "Status.READY"
+    },
+    {
+        "name": "WEATHER_ABUDHABI_TO_JSON",
+        "args": [
+            "ABUDHABI",
+            "results"
+        ],
+        "kwargs": {},
+        "target": "task_03_get_weather_and_save",
+        "start_at": "2023-11-13 16:02:29.763122",
+        "max_working_time": 0.25,
+        "tries": 3,
+        "dependencies": [],
+        "status": "Status.READY"
+    },
+    {
+        "name": "WEATHER_WARSZAWA_TO_JSON",
+        "args": [
+            "WARSZAWA",
+            "results"
+        ],
+        "kwargs": {},
+        "target": "task_03_get_weather_and_save",
+        "start_at": "2023-11-13 16:02:29.763122",
+        "max_working_time": 0.25,
+        "tries": 3,
+        "dependencies": [],
+        "status": "Status.READY"
+    },
+    {
+        "name": "WEATHER_BUCHAREST_TO_JSON",
+        "args": [
+            "BUCHAREST",
+            "results"
+        ],
+        "kwargs": {},
+        "target": "task_03_get_weather_and_save",
+        "start_at": "2023-11-13 16:02:29.763122",
+        "max_working_time": 0.25,
+        "tries": 3,
+        "dependencies": [],
+        "status": "Status.READY"
+    },
+    {
+        "name": "WEATHER_ROMA_TO_JSON",
+        "args": [
+            "ROMA",
+            "results"
+        ],
+        "kwargs": {},
+        "target": "task_03_get_weather_and_save",
+        "start_at": "2023-11-13 16:02:29.763122",
+        "max_working_time": 0.25,
+        "tries": 3,
+        "dependencies": [],
+        "status": "Status.READY"
+    },
+    {
+        "name": "WEATHER_CAIRO_TO_JSON",
+        "args": [
+            "CAIRO",
+            "results"
+        ],
+        "kwargs": {},
+        "target": "task_03_get_weather_and_save",
+        "start_at": "2023-11-13 16:02:29.763122",
+        "max_working_time": 0.25,
+        "tries": 3,
+        "dependencies": [],
+        "status": "Status.READY"
+    },
+    {
+        "name": "WEATHER_GIZA_TO_JSON",
+        "args": [
+            "GIZA",
+            "results"
+        ],
+        "kwargs": {},
+        "target": "task_03_get_weather_and_save",
+        "start_at": "2023-11-13 16:02:29.763122",
+        "max_working_time": 0.25,
+        "tries": 3,
+        "dependencies": [],
+        "status": "Status.READY"
+    },
+    {
+        "name": "WEATHER_MADRID_TO_JSON",
+        "args": [
+            "MADRID",
+            "results"
+        ],
+        "kwargs": {},
+        "target": "task_03_get_weather_and_save",
+        "start_at": "2023-11-13 16:02:29.763122",
+        "max_working_time": 0.25,
+        "tries": 3,
+        "dependencies": [],
+        "status": "Status.READY"
+    },
+    {
+        "name": "WEATHER_TORONTO_TO_JSON",
+        "args": [
+            "TORONTO",
+            "results"
+        ],
+        "kwargs": {},
+        "target": "task_03_get_weather_and_save",
+        "start_at": "2023-11-13 16:02:29.763122",
+        "max_working_time": 0.25,
+        "tries": 3,
+        "dependencies": [],
+        "status": "Status.READY"
     }
 ]

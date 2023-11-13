@@ -1,11 +1,9 @@
-from time import sleep
-
 from scheduler import Scheduler
 from tasks import get_tasks
 
 if __name__ == '__main__':
 
-    # Инициализируем планировщик
+    # Инициализируем планировщик c ограничением в 5 потоков
     scheduler = Scheduler(pool_size=5)
 
     # Грузим задачи в планировщик
@@ -15,10 +13,7 @@ if __name__ == '__main__':
 
     # Запускаем планировщик
     scheduler.run()
-    # sleep(1)
-    # scheduler.stop()
+    # scheduler.run(stop_after=2.0)
 
     # Перезапускаем планировщик
     # scheduler.restart()
-    # sleep(1)
-    # scheduler.stop()

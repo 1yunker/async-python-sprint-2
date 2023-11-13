@@ -1,4 +1,4 @@
-import time
+# import time
 from datetime import datetime
 from enum import Enum
 from functools import wraps
@@ -65,35 +65,41 @@ class Job:
     def __repr__(self):
         return f'{self.target}'
 
-    @coroutine
+    # @coroutine
     def run(self) -> None:
         """
         Запустить задачу.
         """
-        start_time = time.time()
+        # start_time = time.time()
         self.status = Status.EXEC
         try:
-            yield self.target(*self.args, **self.kwargs)
-            time_delta = time.time() - start_time
-            logger.info(
-                f'Здача {self.target} выполнена. '
-                f'Время выполнения: {time_delta}'
-            )
+            self.target(*self.args, **self.kwargs)
         except Exception as err:
             logger.error(
                 f'Задача {self.target} завершилась с ошибкой: {err}'
             )
-            while self.tries > 0:
-                self.tries -= 1
-                logger.warning(f'Задача {self.name} была перезапущена.')
-                try:
-                    self.run()
-                    logger.info(f'Задача {self.name} успешно завершена.')
-                except Exception as err:
-                    logger.error(
-                        f'Задача {self.name} завершилась с ошибкой: {err}'
-                    )
-            return None
+            if self.tries > 0:
+                job_re_run = self.re_run(self.tries)
+                while True:
+                    try:
+                        job_re_run.send(None)
+                    except StopIteration:
+                        break
+
+    @coroutine
+    def re_run(self, tries: int):
+        logger.warning(f'Задача {self.name} была перезапущена.')
+        for i in range(tries):
+            yield
+            try:
+                self.target(*self.args, **self.kwargs)
+                logger.info(f'Задача {self.name} успешно завершена.')
+            except Exception as err:
+                logger.error(
+                    f'После перезапуска задача {self.name} завершилась '
+                    f'с ошибкой: {err}'
+                )
+                continue
 
     def pause(self):
         """
