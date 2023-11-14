@@ -1,3 +1,4 @@
+from datetime import datetime
 import json
 import logging
 import time
@@ -147,7 +148,9 @@ class Scheduler:
                 target=getattr(tsk, task['target']),
                 args=task.get('args'),
                 kwargs=task.get('kwargs'),
-                start_at=task.get('start_at'),
+                start_at=datetime.strptime(
+                    task.get('start_at'), '%Y-%m-%d %H:%M:%S.%f'
+                ),
                 max_working_time=task.get('max_working_time'),
                 # dependencies=task.get('dependencies'),
                 tries=task.get('tries'),

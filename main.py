@@ -7,13 +7,13 @@ if __name__ == '__main__':
     scheduler = Scheduler(pool_size=5)
 
     # Грузим задачи в планировщик
-    tasks = get_tasks()
-    for task in tasks:
-        scheduler.add_to_schedule(task=task)
+    # tasks = get_tasks()
+    # for task in tasks:
+    #     scheduler.add_to_schedule(task=task)
 
     # Запускаем планировщик
     # scheduler.run()
-    scheduler.run(stop_after=2.0)
+    # scheduler.run(stop_after=2.0)
 
     # Перезапускаем планировщик
-    # scheduler.restart()
+    scheduler.restart()
