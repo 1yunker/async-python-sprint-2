@@ -17,7 +17,17 @@ logging.basicConfig(
 logger = logging.getLogger()
 
 
-# @singleton
+def singleton(class_):
+    instances = {}
+
+    def getinstance(*args, **kwargs):
+        if class_ not in instances:
+            instances[class_] = class_(*args, **kwargs)
+        return instances[class_]
+    return getinstance
+
+
+@singleton
 class Scheduler:
     """
     Планировщик задач.
@@ -65,7 +75,7 @@ class Scheduler:
             while len(self.tasks) > 0:
                 # Проверка на срабатывание остановки планировщика
                 time_delta = time.time() - start_time
-                if stop_after != 0.0 and time_delta > stop_after:
+                if stop_after != 0 and time_delta > stop_after:
                     self.stop()
                     break
 

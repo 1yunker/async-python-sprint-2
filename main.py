@@ -16,4 +16,4 @@ if __name__ == '__main__':
     scheduler.run(stop_after=2.0)
 
     # Перезапускаем планировщик
-    scheduler.restart()
+    # scheduler.restart()
