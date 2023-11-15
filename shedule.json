@@ -6,95 +6,39 @@
         ],
         "kwargs": {},
         "target": "task_01_mkdir",
-        "start_at": "2023-11-15 18:35:08.329201",
+        "start_at": "2023-11-16 00:24:20.929030",
         "max_working_time": null,
+        "tries": 3,
+        "dependencies": null,
+        "status": "Status.DONE"
+    },
+    {
+        "name": "WEATHER_LONDON_TO_JSON",
+        "args": [
+            "LONDON",
+            "results"
+        ],
+        "kwargs": {},
+        "target": "task_03_get_weather_and_save",
+        "start_at": "2023-11-16 00:24:20.929030",
+        "max_working_time": 1,
+        "tries": 3,
+        "dependencies": null,
+        "status": "Status.READY"
+    },
+    {
+        "name": "WEATHER_MOSCOW_TO_JSON",
+        "args": [
+            "MOSCOW",
+            "results"
+        ],
+        "kwargs": {},
+        "target": "task_03_get_weather_and_save",
+        "start_at": "2023-11-16 00:24:20.929030",
+        "max_working_time": 1,
         "tries": 0,
         "dependencies": null,
-        "status": "Status.READY"
-    },
-    {
-        "name": "WEATHER_KALININGRAD_TO_JSON",
-        "args": [
-            "KALININGRAD",
-            "results"
-        ],
-        "kwargs": {},
-        "target": "task_03_get_weather_and_save",
-        "start_at": "2023-11-15 18:35:08.329201",
-        "max_working_time": 0.25,
-        "tries": 3,
-        "dependencies": null,
-        "status": "Status.READY"
-    },
-    {
-        "name": "WEATHER_ABUDHABI_TO_JSON",
-        "args": [
-            "ABUDHABI",
-            "results"
-        ],
-        "kwargs": {},
-        "target": "task_03_get_weather_and_save",
-        "start_at": "2023-11-15 18:35:08.329201",
-        "max_working_time": 0.25,
-        "tries": 3,
-        "dependencies": null,
-        "status": "Status.READY"
-    },
-    {
-        "name": "WEATHER_WARSZAWA_TO_JSON",
-        "args": [
-            "WARSZAWA",
-            "results"
-        ],
-        "kwargs": {},
-        "target": "task_03_get_weather_and_save",
-        "start_at": "2023-11-15 18:35:08.329201",
-        "max_working_time": 0.25,
-        "tries": 3,
-        "dependencies": null,
-        "status": "Status.READY"
-    },
-    {
-        "name": "WEATHER_BUCHAREST_TO_JSON",
-        "args": [
-            "BUCHAREST",
-            "results"
-        ],
-        "kwargs": {},
-        "target": "task_03_get_weather_and_save",
-        "start_at": "2023-11-15 18:35:08.329201",
-        "max_working_time": 0.25,
-        "tries": 3,
-        "dependencies": null,
-        "status": "Status.READY"
-    },
-    {
-        "name": "WEATHER_ROMA_TO_JSON",
-        "args": [
-            "ROMA",
-            "results"
-        ],
-        "kwargs": {},
-        "target": "task_03_get_weather_and_save",
-        "start_at": "2023-11-15 18:35:08.329201",
-        "max_working_time": 0.25,
-        "tries": 3,
-        "dependencies": null,
-        "status": "Status.READY"
-    },
-    {
-        "name": "WEATHER_CAIRO_TO_JSON",
-        "args": [
-            "CAIRO",
-            "results"
-        ],
-        "kwargs": {},
-        "target": "task_03_get_weather_and_save",
-        "start_at": "2023-11-15 18:35:08.329201",
-        "max_working_time": 0.25,
-        "tries": 3,
-        "dependencies": null,
-        "status": "Status.READY"
+        "status": "Status.DONE"
     },
     {
         "name": "WEATHER_GIZA_TO_JSON",
@@ -104,36 +48,21 @@
         ],
         "kwargs": {},
         "target": "task_03_get_weather_and_save",
-        "start_at": "2023-11-15 18:35:08.329201",
+        "start_at": "2023-11-16 00:24:20.929030",
         "max_working_time": 0.25,
         "tries": 3,
         "dependencies": null,
-        "status": "Status.READY"
+        "status": "Status.DONE"
     },
     {
-        "name": "WEATHER_MADRID_TO_JSON",
+        "name": "DELETE_TEMP_DIR",
         "args": [
-            "MADRID",
             "results"
         ],
         "kwargs": {},
-        "target": "task_03_get_weather_and_save",
-        "start_at": "2023-11-15 18:35:08.329201",
-        "max_working_time": 0.25,
-        "tries": 3,
-        "dependencies": null,
-        "status": "Status.READY"
-    },
-    {
-        "name": "WEATHER_TORONTO_TO_JSON",
-        "args": [
-            "TORONTO",
-            "results"
-        ],
-        "kwargs": {},
-        "target": "task_03_get_weather_and_save",
-        "start_at": "2023-11-15 18:35:08.329201",
-        "max_working_time": 0.25,
+        "target": "task_02_rmdir",
+        "start_at": "2023-11-16 00:24:20.929030",
+        "max_working_time": null,
         "tries": 3,
         "dependencies": null,
         "status": "Status.READY"

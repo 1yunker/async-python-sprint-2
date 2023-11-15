@@ -37,13 +37,13 @@ class Status(Enum):
     Статус задачи.
     --------------
     READY - задача готова к исполнению
-    EXEC - задача выполняется
+    CANCELED - задача отменена
     WAIT - задача ожидает выполнение другой задачи
     DONE - задача успешно исполнена
     ERROR - при выполнении задачи возникла ошибка
     """
     READY = 0
-    EXEC = 1
+    CANCELED = 1
     WAIT = 2
     DONE = 3
     ERROR = 4
@@ -84,8 +84,6 @@ class Job:
         """
         Запустить задачу.
         """
-        # start_time = time.time()
-        self.status = Status.EXEC
 
         try:
             if self.start_at and self.start_at > datetime.now():
@@ -105,6 +103,7 @@ class Job:
                     try:
                         job_re_run.send(None)
                     except StopIteration:
+                        self.status = Status.CANCELED
                         break
 
     @coroutine

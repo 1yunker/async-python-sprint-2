@@ -10,7 +10,7 @@ if __name__ == '__main__':
     tasks = get_tasks()
     for task in tasks:
         scheduler.add_to_schedule(task=task)
-    scheduler.run(stop_after=2.0)
+    scheduler.run(stop_after=0.2)
 
     # Перезапускаем планировщик
-    # scheduler.restart()
+    scheduler.restart()
