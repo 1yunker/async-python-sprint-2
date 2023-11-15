@@ -50,14 +50,17 @@ class Scheduler:
         Добавить задачу в список на исполнение.
         """
         if task.dependencies:
-            logger.info('>>> Добавление в планировщик запвисимых задач:')
             for depend_task in task.dependencies:
                 if depend_task not in self.tasks:
+                    logger.info(
+                        '>>> Добавление в планировщик зависимых задач:'
+                    )
                     self.add_to_schedule(depend_task)
             logger.info('>>> Все зависимые задачи успешно добавлены.')
 
-        self.tasks.append(task)
-        logger.info(f'Задача {task.name} успешно добавлена в планировщик.')
+        if task not in self.tasks:
+            self.tasks.append(task)
+            logger.info(f'Задача {task.name} успешно добавлена в планировщик.')
 
     def run(self, stop_after: float = 0.0) -> None:
         """
@@ -76,7 +79,7 @@ class Scheduler:
             while len(self.tasks) > 0:
                 # Проверка на срабатывание остановки планировщика
                 time_delta = time.time() - start_time
-                if stop_after != 0 and time_delta > stop_after:
+                if stop_after > 0 and time_delta > stop_after:
                     self.stop()
                     break
 
@@ -148,9 +151,9 @@ class Scheduler:
                 target=getattr(tsk, task['target']),
                 args=task.get('args'),
                 kwargs=task.get('kwargs'),
-                start_at=datetime.strptime(
-                    task.get('start_at'), '%Y-%m-%d %H:%M:%S.%f'
-                ),
+                # start_at=datetime.strptime(
+                #     task.get('start_at'), '%Y-%m-%d %H:%M:%S.%f'
+                # ),
                 max_working_time=task.get('max_working_time'),
                 # dependencies=task.get('dependencies'),
                 tries=task.get('tries'),

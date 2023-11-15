@@ -1,8 +1,7 @@
 import json
+import logging
 from http import HTTPStatus
 from urllib.request import urlopen
-
-from job import logging
 
 ERR_MESSAGE_TEMPLATE = "Unexpected error: {error}"
 

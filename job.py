@@ -19,6 +19,19 @@ def coroutine(f):
     return wrap
 
 
+def execution_time(func):
+    from time import time
+
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        start_time = time()
+        value = func(*args, **kwargs)
+        end_time = time()
+        logger.info(f'Время выполнения: {end_time-start_time} сек.')
+        return value
+    return wrapper
+
+
 class Status(Enum):
     """
     Статус задачи.
@@ -66,7 +79,7 @@ class Job:
     def __repr__(self):
         return f'{self.target}'
 
-    # @coroutine
+    @execution_time
     def run(self) -> None:
         """
         Запустить задачу.
@@ -96,8 +109,9 @@ class Job:
 
     @coroutine
     def re_run(self, tries: int):
-        logger.warning(f'Задача {self.name} была перезапущена.')
-        for i in range(tries):
+        logger.warning(f'Попытка перезапуска задачи {self.name} после сбоя: '
+                       f'(tries={tries})')
+        for _ in range(tries):
             yield
             try:
                 self.target(*self.args, **self.kwargs)
