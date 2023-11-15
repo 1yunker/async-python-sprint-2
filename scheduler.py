@@ -97,7 +97,7 @@ class Scheduler:
                 # Если зависимые задачи не выполнены - возвращаем
                 # задачу в конец очереди
                 if (not self.is_ready_to_start(job)
-                   and job.status != Status.CANCELED):
+                   and job.status not in (Status.CANCELED, Status.ERROR)):
                     job.status = Status.WAIT
                     self.tasks.append(job)
                     logger.info(

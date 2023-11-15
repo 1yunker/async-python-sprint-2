@@ -6,25 +6,11 @@
         ],
         "kwargs": {},
         "target": "task_01_mkdir",
-        "start_at": "2023-11-16 00:24:20.929030",
+        "start_at": "2023-11-16 00:39:26.181994",
         "max_working_time": null,
         "tries": 3,
         "dependencies": null,
         "status": "Status.DONE"
-    },
-    {
-        "name": "WEATHER_LONDON_TO_JSON",
-        "args": [
-            "LONDON",
-            "results"
-        ],
-        "kwargs": {},
-        "target": "task_03_get_weather_and_save",
-        "start_at": "2023-11-16 00:24:20.929030",
-        "max_working_time": 1,
-        "tries": 3,
-        "dependencies": null,
-        "status": "Status.READY"
     },
     {
         "name": "WEATHER_MOSCOW_TO_JSON",
@@ -34,11 +20,25 @@
         ],
         "kwargs": {},
         "target": "task_03_get_weather_and_save",
-        "start_at": "2023-11-16 00:24:20.929030",
+        "start_at": "2023-11-16 00:39:26.181994",
         "max_working_time": 1,
         "tries": 0,
         "dependencies": null,
-        "status": "Status.DONE"
+        "status": "Status.READY"
+    },
+    {
+        "name": "WEATHER_LONDON_TO_JSON",
+        "args": [
+            "LONDON",
+            "results"
+        ],
+        "kwargs": {},
+        "target": "task_03_get_weather_and_save",
+        "start_at": "2023-11-16 00:39:26.181994",
+        "max_working_time": 1,
+        "tries": 3,
+        "dependencies": null,
+        "status": "Status.READY"
     },
     {
         "name": "WEATHER_GIZA_TO_JSON",
@@ -48,7 +48,7 @@
         ],
         "kwargs": {},
         "target": "task_03_get_weather_and_save",
-        "start_at": "2023-11-16 00:24:20.929030",
+        "start_at": "2023-11-16 00:39:26.181994",
         "max_working_time": 0.25,
         "tries": 3,
         "dependencies": null,
@@ -61,7 +61,7 @@
         ],
         "kwargs": {},
         "target": "task_02_rmdir",
-        "start_at": "2023-11-16 00:24:20.929030",
+        "start_at": "2023-11-16 00:39:26.181994",
         "max_working_time": null,
         "tries": 3,
         "dependencies": null,

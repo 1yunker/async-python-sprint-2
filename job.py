@@ -1,4 +1,3 @@
-# import time
 from datetime import datetime
 from enum import Enum
 from functools import wraps
@@ -103,7 +102,7 @@ class Job:
                     try:
                         job_re_run.send(None)
                     except StopIteration:
-                        self.status = Status.CANCELED
+                        self.status = Status.ERROR
                         break
 
     @coroutine
