@@ -1,16 +1,15 @@
 [
     {
-        "name": "WEATHER_NOVOSIBIRSK_TO_JSON",
+        "name": "CREATE_TEMP_DIR",
         "args": [
-            "NOVOSIBIRSK",
             "results"
         ],
         "kwargs": {},
-        "target": "task_03_get_weather_and_save",
-        "start_at": "2023-11-14 16:32:30.918094",
-        "max_working_time": 0.25,
-        "tries": 3,
-        "dependencies": [],
+        "target": "task_01_mkdir",
+        "start_at": "2023-11-15 18:35:08.329201",
+        "max_working_time": null,
+        "tries": 0,
+        "dependencies": null,
         "status": "Status.READY"
     },
     {
@@ -21,10 +20,10 @@
         ],
         "kwargs": {},
         "target": "task_03_get_weather_and_save",
-        "start_at": "2023-11-14 16:32:30.918094",
+        "start_at": "2023-11-15 18:35:08.329201",
         "max_working_time": 0.25,
         "tries": 3,
-        "dependencies": [],
+        "dependencies": null,
         "status": "Status.READY"
     },
     {
@@ -35,10 +34,10 @@
         ],
         "kwargs": {},
         "target": "task_03_get_weather_and_save",
-        "start_at": "2023-11-14 16:32:30.918094",
+        "start_at": "2023-11-15 18:35:08.329201",
         "max_working_time": 0.25,
         "tries": 3,
-        "dependencies": [],
+        "dependencies": null,
         "status": "Status.READY"
     },
     {
@@ -49,10 +48,10 @@
         ],
         "kwargs": {},
         "target": "task_03_get_weather_and_save",
-        "start_at": "2023-11-14 16:32:30.918094",
+        "start_at": "2023-11-15 18:35:08.329201",
         "max_working_time": 0.25,
         "tries": 3,
-        "dependencies": [],
+        "dependencies": null,
         "status": "Status.READY"
     },
     {
@@ -63,10 +62,10 @@
         ],
         "kwargs": {},
         "target": "task_03_get_weather_and_save",
-        "start_at": "2023-11-14 16:32:30.918094",
+        "start_at": "2023-11-15 18:35:08.329201",
         "max_working_time": 0.25,
         "tries": 3,
-        "dependencies": [],
+        "dependencies": null,
         "status": "Status.READY"
     },
     {
@@ -77,10 +76,10 @@
         ],
         "kwargs": {},
         "target": "task_03_get_weather_and_save",
-        "start_at": "2023-11-14 16:32:30.918094",
+        "start_at": "2023-11-15 18:35:08.329201",
         "max_working_time": 0.25,
         "tries": 3,
-        "dependencies": [],
+        "dependencies": null,
         "status": "Status.READY"
     },
     {
@@ -91,10 +90,10 @@
         ],
         "kwargs": {},
         "target": "task_03_get_weather_and_save",
-        "start_at": "2023-11-14 16:32:30.918094",
+        "start_at": "2023-11-15 18:35:08.329201",
         "max_working_time": 0.25,
         "tries": 3,
-        "dependencies": [],
+        "dependencies": null,
         "status": "Status.READY"
     },
     {
@@ -105,10 +104,10 @@
         ],
         "kwargs": {},
         "target": "task_03_get_weather_and_save",
-        "start_at": "2023-11-14 16:32:30.918094",
+        "start_at": "2023-11-15 18:35:08.329201",
         "max_working_time": 0.25,
         "tries": 3,
-        "dependencies": [],
+        "dependencies": null,
         "status": "Status.READY"
     },
     {
@@ -119,10 +118,10 @@
         ],
         "kwargs": {},
         "target": "task_03_get_weather_and_save",
-        "start_at": "2023-11-14 16:32:30.918094",
+        "start_at": "2023-11-15 18:35:08.329201",
         "max_working_time": 0.25,
         "tries": 3,
-        "dependencies": [],
+        "dependencies": null,
         "status": "Status.READY"
     },
     {
@@ -133,10 +132,10 @@
         ],
         "kwargs": {},
         "target": "task_03_get_weather_and_save",
-        "start_at": "2023-11-14 16:32:30.918094",
+        "start_at": "2023-11-15 18:35:08.329201",
         "max_working_time": 0.25,
         "tries": 3,
-        "dependencies": [],
+        "dependencies": null,
         "status": "Status.READY"
     }
 ]

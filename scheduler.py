@@ -5,7 +5,7 @@ import time
 from concurrent.futures import ThreadPoolExecutor, TimeoutError
 
 import tasks as tsk
-from job import Job
+from job import Job, Status
 
 format = '%(asctime)s [%(levelname)s]: %(message)s'
 logging.basicConfig(
@@ -121,18 +121,44 @@ class Scheduler:
         self.backup(self.BACKUP_FILE)
         self.is_run = False
 
+    def add_task_dependencies(self, task: Job) -> list:
+        tasks_json = []
+        if task.dependencies:
+            for task in task.dependencies:
+                task_dict = task.__dict__
+                task_dict['target'] = task.target.__name__
+                task_dict['start_at'] = str(task.start_at)
+                task_dict['dependencies'] = None
+                task_dict['status'] = Status.READY
+                tasks_json.append(task_dict)
+        return tasks_json
+
     def backup(self, backup_file):
         """
         Записать задачи из планировщика в JSON-файл.
         """
         tasks_json = []
         for task in self.tasks:
-            task_dict = task.__dict__
+            # Добавляем все зависимые задачи перед основной
+            if task.dependencies:
+                for depend_task in task.dependencies:
+                    depend_task_dict = dict(depend_task.__dict__)
+                    depend_task_dict['target'] = depend_task.target.__name__
+                    depend_task_dict['start_at'] = str(depend_task.start_at)
+                    depend_task_dict['dependencies'] = None
+                    depend_task_dict['status'] = str(task.status)
+
+                    if depend_task_dict not in tasks_json:
+                        tasks_json.append(depend_task_dict)
+            # tasks_json.extend(self.add_task_dependencies(task))
+
+            task_dict = dict(task.__dict__)
             task_dict['target'] = task.target.__name__
             task_dict['start_at'] = str(task.start_at)
-            task_dict['dependencies'] = [i.target for i in task.dependencies]
+            task_dict['dependencies'] = None
             task_dict['status'] = str(task.status)
             tasks_json.append(task_dict)
+
         with open(backup_file, 'w') as f:
             json.dump(tasks_json, f, indent=4)
         logger.info('Работа планировщика остановлена. '
@@ -151,11 +177,10 @@ class Scheduler:
                 target=getattr(tsk, task['target']),
                 args=task.get('args'),
                 kwargs=task.get('kwargs'),
-                # start_at=datetime.strptime(
-                #     task.get('start_at'), '%Y-%m-%d %H:%M:%S.%f'
-                # ),
+                start_at=datetime.strptime(
+                    task.get('start_at'), '%Y-%m-%d %H:%M:%S.%f'
+                ),
                 max_working_time=task.get('max_working_time'),
-                # dependencies=task.get('dependencies'),
                 tries=task.get('tries'),
             )
             self.add_to_schedule(task=job)

@@ -41,48 +41,6 @@ def task_03_get_weather_and_save(city_name, temp_dir=TEMP_DIR):
         )
 
 
-def task_003_get_url_with_data(city_name):
-    try:
-        url_with_data = get_url_by_city_name(city_name)
-        logger.info(f'URL с данными о городе {city_name} успешно получен.')
-        return url_with_data
-    except Exception as error_msg:
-        logger.error(
-            f'При получении URL c данныvb о городе {city_name} возникла '
-            f'ошибка: {error_msg}.'
-        )
-        return None
-
-
-def task_002_get_forecasting(url_with_data):
-    try:
-        resp = YandexWeatherAPI.get_forecasting(url_with_data)
-        logger.info(f'Данные о погоде по {url_with_data} успешно получены.')
-        return resp
-    except Exception as error_msg:
-        logger.error(
-            f'При получении данных о погоде по {url_with_data} возникла '
-            f'ошибка: {error_msg}.'
-        )
-        return None
-
-
-def task_001_save_to_josn(resp, temp_dir, city_name):
-    try:
-        if resp:
-            file_with_path = f'{temp_dir}/{city_name}_response.json'
-            with open(file_with_path, 'w') as file:
-                json.dump(resp, file, indent=4)
-                logger.info(
-                    f'Информация о городе {city_name} успешно записана.'
-                )
-    except Exception as error_msg:
-        logger.error(
-            f'При получении данных о городе {city_name} возникла ошибка: '
-            f'{error_msg}.'
-        )
-
-
 def get_tasks():
     tasks = []
     task_00 = Job(
@@ -113,24 +71,23 @@ def get_tasks():
         dependencies=[task_01, task_02, task_03]
     )
 
-
+    tasks.append(task_00)
+    tasks.append(task_01)
+    for city_name in CITIES.keys():
+        tasks.append(
+            Job(
+                name=f'WEATHER_{city_name}_TO_JSON',
+                target=task_03_get_weather_and_save,
+                args=(city_name, TEMP_DIR),
+                max_working_time=0.25,
+                tries=3,
+                dependencies=[task_01],
+            )
+        )
 
     # tasks.append(task_00)
+    # tasks.append(task_03)
+    # tasks.append(task_04)
     # tasks.append(task_01)
-    # for city_name in CITIES.keys():
-    #     tasks.append(
-    #         Job(
-    #             name=f'WEATHER_{city_name}_TO_JSON',
-    #             target=task_03_get_weather_and_save,
-    #             args=(city_name, TEMP_DIR),
-    #             max_working_time=0.25,
-    #             tries=3,
-    #         )
-    #     )
-
-    tasks.append(task_00)
-    tasks.append(task_03)
-    tasks.append(task_04)
-    tasks.append(task_01)
-    tasks.append(task_02)
+    # tasks.append(task_02)
     return tasks
