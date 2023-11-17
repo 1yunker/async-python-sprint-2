@@ -55,14 +55,14 @@ class Job:
 
     def __init__(
             self,
-            name,
+            name: str,
             target: Callable,
             args=None,
             kwargs=None,
             start_at=datetime.now(),
             max_working_time=None,
             tries: int = 0,
-            dependencies=[],
+            dependencies=None,
             status=Status.READY
     ):
         self.name = name
@@ -72,7 +72,7 @@ class Job:
         self.start_at = start_at
         self.max_working_time = max_working_time
         self.tries = tries
-        self.dependencies = dependencies
+        self.dependencies = dependencies or []
         self.status = status
 
     def __repr__(self):
@@ -93,6 +93,7 @@ class Job:
             else:
                 self.target(*self.args, **self.kwargs)
         except Exception as err:
+            self.status = Status.ERROR
             logger.error(
                 f'Задача {self.target} завершилась с ошибкой: {err}'
             )
@@ -102,7 +103,6 @@ class Job:
                     try:
                         job_re_run.send(None)
                     except StopIteration:
-                        self.status = Status.ERROR
                         break
 
     @coroutine
@@ -113,8 +113,10 @@ class Job:
             yield
             try:
                 self.target(*self.args, **self.kwargs)
+                self.status = Status.DONE
                 logger.info(f'Задача {self.name} успешно завершена.')
             except Exception as err:
+                self.status = Status.ERROR
                 logger.error(
                     f'После перезапуска задача {self.name} завершилась '
                     f'с ошибкой: {err}'

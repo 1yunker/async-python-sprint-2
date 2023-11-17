@@ -85,10 +85,10 @@ class Scheduler:
 
         with ThreadPoolExecutor(max_workers=self._pool_size) as pool:
 
-            while bool(self.tasks):
+            while self.tasks:
                 # Проверка на срабатывание остановки планировщика
                 time_delta = time.time() - start_time
-                if stop_after > 0 and time_delta > stop_after:
+                if 0 < stop_after < time_delta:
                     self.stop()
                     break
 
